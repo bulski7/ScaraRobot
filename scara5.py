@@ -41,10 +41,10 @@ class FiveBar:
     def ShowPosture(self):
         x = [0]*5;
         y = [0]*5;
-        
-        for i in range(1,5):
-            x[i] = x[i-1] + self.L[i-1]*cos(self.th[i-1]);
-            y[i] = y[i-1] + self.L[i-1]*sin(self.th[i-1]);
+        for i in [1,2,3,4]:
+            x[i] = x[i-1] + self.L[i]*cos(self.th[i]);
+            y[i] = y[i-1] + self.L[i]*sin(self.th[i]);
+            last_i = i;
         
         plt.plot(x,y,'r--');
         plt.show();
