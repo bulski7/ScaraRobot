@@ -5,7 +5,7 @@ import numpy as np
 from scara5 import FiveBar
 scara = FiveBar();
 scara.L = [2.5,2,2,2,2];
-scara.th = [np.pi,1.6,.7,-0.7,-1.6]
-scara.ShowPosture()
-scara.SetEndEffectorPosition(1.5,1.5)
+scara.th = [0,1.6,.7,2.5,1.5]
+#scara.ShowPosture()
+scara.SetEndEffectorPosition(1.5,3)
 scara.ShowPosture()
