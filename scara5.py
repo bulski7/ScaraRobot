@@ -1,6 +1,6 @@
 from math import atan, sqrt, asin, sin, cos, acos
 import math
-from KinHelp import GetAngle
+from KinHelp import GetAngle, Distance
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,9 +10,9 @@ class FiveBar:
 
     def __init__(self):
         self.L = [1,1,1,1,1];   #link length vector
-        self.th = [1,1,1,1,1];  #theta vector
-        # self.Ex = 0;            #end effector x
-        # self.Ey = 0;            #end effector y
+        self.th = [0,0,0,0,0];  #theta vector
+        #self.x;            #end effector x
+        #self.y;            #end effector y
 
     #Set the link angles to achieve a given X,Y of the end effector
     #Using geometric equations
@@ -44,6 +44,7 @@ class FiveBar:
     
     #Set the link angles to achieve a given X,Y of the end effector
     #Using geometric equations
+    
     def SetEndEffectorPosition(self, EndEffectorX, EndEffectorY):
         xc = EndEffectorX; 
         yc = EndEffectorY;
@@ -56,10 +57,9 @@ class FiveBar:
         
         self.th[3] = math.pi - (GetAngle(self.L[1],self.L[2],F)-(math.pi-self.th[1]));
         self.th[2] = GetAngle(self.L[3],self.L[4],G)-self.th[4];
-        
-        
- 
+    
     def ShowPosture(self):
+        #plt.cla();
         x = [0]*5;
         y = [0]*5;
         for i in [1,2]:
@@ -73,5 +73,11 @@ class FiveBar:
             y[i] = y[last_i] + self.L[last_i]*sin(self.th[last_i]);
             last_i = i;
         
-        plt.plot(x,y,'r--');
-        plt.show();
+        print(Distance(x[3],y[3],x[2],y[2]));
+        plt.plot(x,y,'--ro');
+        plt.axes().set_aspect('equal')
+        plt.xlim([-2, 4.5]);
+        plt.ylim([-4, 4]);
+        plt.draw();
+        
+    
