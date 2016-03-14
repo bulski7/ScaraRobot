@@ -10,6 +10,6 @@ scara = FiveBar();
 scara.L = [2.5,2,2,2,2];
 
 #Move the end effector at CV
-for x in np.linspace(0,3,100):
-    scara.SetEndEffectorPosition(x,2)#1.5 + math.cos(t),2 + math.sin(t));
+for t in np.linspace(0,2*math.pi,100):
+    scara.SetEndEffectorPosition(1.5 + math.cos(t),2 + math.sin(t));
     scara.ShowPosture();
