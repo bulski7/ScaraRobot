@@ -1,6 +1,6 @@
 from math import atan, sqrt, asin, sin, cos, acos
 import math
-from KinHelp import GetAngle, Distance
+from KinHelp import GetAngle, Distance, sign, GetAngleByPoints
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,6 +11,8 @@ class FiveBar:
     def __init__(self):
         self.L = [1,1,1,1,1];   #link length vector
         self.th = [0,0,0,0,0];  #theta vector
+        self.x = [0,0,0,0,0];
+        self.y = [0,0,0,0,0];
    
     #Set the link angles to achieve a given X,Y of the end effector
     #Using geometric equations
@@ -20,15 +22,30 @@ class FiveBar:
         
         F = sqrt(xc**2 + yc**2);
         G = sqrt((self.L[0]-xc)**2 + yc**2);
+        thF = math.atan2(yc,xc);
+        thG = math.atan2(yc,self.L[0]-xc);
         
-        self.th[1] = GetAngle(self.L[0],F,G) + GetAngle(self.L[1],F,self.L[2]);
-        self.th[4] = math.pi - (GetAngle(self.L[0],G,F) + GetAngle(self.L[4],G,self.L[3]));
+        try:
+            self.th[1] = (GetAngle(self.L[0],F,G) + GetAngle(self.L[1],F,self.L[2]));
+            self.x[1] = self.L[1]*cos(self.th[1]);
+            self.y[1] = self.L[1]*sin(self.th[1]);
+            self.th[2] = GetAngleByPoints(self.x[1],xc,self.y[1],yc);
+            
+            
+            self.th[4] = (math.pi - (GetAngle(self.L[0],G,F) + GetAngle(self.L[4],G,self.L[3])));
+            self.x[4] = self.L[0] + self.L[4]*cos(self.th[4]);
+            self.y[4] = self.L[4]*sin(self.th[4]);
+            self.th[3] = GetAngleByPoints(self.x[4],xc,self.y[4],yc);
+            
+                
+            #self.th[2] = (GetAngle(self.L[1],self.L[2],F)-(math.pi-self.th[1]));
+            #self.th[3] = math.pi - GetAngle(self.L[3],self.L[4],G)-self.th[4];
+            
+        except ValueError:
+            print(self.th[1], "no solution\n");
         
-        self.th[2] = (GetAngle(self.L[1],self.L[2],F)-(math.pi-self.th[1]));
-        self.th[3] = math.pi - GetAngle(self.L[3],self.L[4],G)-self.th[4];
-    
     def ShowPosture(self):
-        plt.cla();
+        #plt.cla();
         x = [0]*5;
         y = [0]*5;
         for i in [1,2]:
@@ -42,7 +59,7 @@ class FiveBar:
             y[i] = y[last_i] + self.L[last_i]*sin(self.th[last_i]);
             last_i = i;
         
-        print(Distance(x[3],y[3],x[2],y[2]));
+        #print(Distance(x[3],y[3],x[2],y[2]));
         plt.plot(x,y,'--ro');
         plt.axes().set_aspect('equal')
         plt.xlim([-2, 4.5]);
