@@ -22,8 +22,12 @@ class FiveBar:
         
         F = sqrt(xc**2 + yc**2);
         G = sqrt((self.L[0]-xc)**2 + yc**2);
+        
         thF = math.atan2(yc,xc);
-        thG = math.atan2(yc,self.L[0]-xc);
+        thG = math.atan2(yc,xc - self.L[0]);
+        th1F = GetAngle(self.L[1],F,self.L[2]);
+        th4G = GetAngle(self.L[4],G,self.L[3]);
+        
         
         try:
             self.th[1] = (GetAngle(self.L[0],F,G) + GetAngle(self.L[1],F,self.L[2]));
