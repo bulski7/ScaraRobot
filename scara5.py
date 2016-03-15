@@ -1,4 +1,4 @@
-from math import atan, sqrt, asin, sin, cos, acos
+from math import atan, sqrt, asin, sin, cos, acos, tan
 import math
 from KinHelp import GetAngle, Distance, sign, GetAngleByPoints
 
@@ -65,5 +65,35 @@ class FiveBar:
         plt.xlim([-2, 4.5]);
         plt.ylim([-4, 4]);
         plt.draw();
-        
     
+    def DriveArmsIntersect(self):
+        #Set up the linear algebra equations
+        A = np.array([[tan(self.th[1]), -1],[tan(self.th[4]), -1]]);
+        B = np.array([0, self.L[0]*tan(self.th[4])]);
+        
+        #compute the determinant
+        det = np.linalg.det(A);
+        
+        #find the intersection point
+        if(det == 0):
+            pass;
+        else:
+            X = np.linalg.solve(A,B);
+            
+        xInt = X[0];
+        yInt = X[1];
+        
+        #if the intersection point is within the radii of both arms and they are
+        #pointed towards each other, there will be a collision
+        
+        IntDist1 = Distance(xInt,yInt,0,0);
+        IntDist4 = Distance(xInt,yInt,self.L[0],0);
+        
+        OnePointsTowardsFour = cos(self.th[1])>0;
+        FourPointsTowardsOne = cos(self.th[4])<0;
+        
+        
+        if(OnePointsTowardsFour and FourPointsTowardsOne and IntDist1 < self.L[1] and IntDist4 < self.L[4]):
+            return True;
+        else:
+            return False;
