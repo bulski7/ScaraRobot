@@ -20,36 +20,46 @@ class FiveBar:
         xc = EndEffectorX; 
         yc = EndEffectorY;
         
-        F = sqrt(xc**2 + yc**2);
-        G = sqrt((self.L[0]-xc)**2 + yc**2);
-        
-        thF = math.atan2(yc,xc);
-        thG = math.atan2(yc,xc - self.L[0]);
-        th1F = GetAngle(self.L[1],F,self.L[2]);
-        th4G = GetAngle(self.L[4],G,self.L[3]);
-        
-        
         try:
-            self.th[1] = (GetAngle(self.L[0],F,G) + GetAngle(self.L[1],F,self.L[2]));
+            F = sqrt(xc**2 + yc**2);
+            G = sqrt((self.L[0]-xc)**2 + yc**2);
+            
+            thF = math.atan2(yc,xc);
+            th1F = GetAngle(self.L[1],F,self.L[2]);
+            th1 = [0,0];
+            th1[0] = thF + th1F;
+            th1[1] = thF - th1F;
+            
+            thG = math.atan2(yc,xc - self.L[0]);
+            th4G = GetAngle(self.L[4],G,self.L[3]);
+            th4  = [0,0];
+            th4[0] = thG + th4G;
+            th4[1] = thG - th4G;
+            
+            #Select the first set of angles that do not intersect
+            for self.th[1] in th1:
+                for self.th[4] in th4:
+                    if(not self.DriveArmsIntersect()):
+                        break;
+                else:
+                    continue;
+                break;
+                    
+            # self.th[1] = (GetAngle(self.L[0],F,G) + GetAngle(self.L[1],F,self.L[2]));
             self.x[1] = self.L[1]*cos(self.th[1]);
             self.y[1] = self.L[1]*sin(self.th[1]);
-            self.th[2] = GetAngleByPoints(self.x[1],xc,self.y[1],yc);
-            
-            
-            self.th[4] = (math.pi - (GetAngle(self.L[0],G,F) + GetAngle(self.L[4],G,self.L[3])));
+            self.th[2] = GetAngleByPoints(self.x[1],self.y[1],xc,yc);
+             
+            # self.th[4] = (math.pi - (GetAngle(self.L[0],G,F) + GetAngle(self.L[4],G,self.L[3])));
             self.x[4] = self.L[0] + self.L[4]*cos(self.th[4]);
             self.y[4] = self.L[4]*sin(self.th[4]);
-            self.th[3] = GetAngleByPoints(self.x[4],xc,self.y[4],yc);
-            
-                
-            #self.th[2] = (GetAngle(self.L[1],self.L[2],F)-(math.pi-self.th[1]));
-            #self.th[3] = math.pi - GetAngle(self.L[3],self.L[4],G)-self.th[4];
+            self.th[3] = GetAngleByPoints(self.x[4],self.y[4],xc,yc);
             
         except ValueError:
             print(self.th[1], "no solution\n");
         
     def ShowPosture(self):
-        #plt.cla();
+        plt.cla();
         x = [0]*5;
         y = [0]*5;
         for i in [1,2]:
