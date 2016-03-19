@@ -80,6 +80,23 @@ class FiveBar:
         plt.ylim([-4, 4]);
         plt.draw();
     
+    def SetDriveArmPositions(self, th1, th4)
+        self.th[1] = th1;
+        self.th[4] = th4;
+        self.x[2] = self.L[1]*cos(self.th[1]);
+        self.y[2] = self.L[1]*sin(self.th[1]);
+        
+        self.x[3] = self.L[0] + self.L[4]*cos(self.th[4]);
+        self.y[3] = self.L[4]*sin(self.th[4]);
+        
+        dist2to3 = dist(self.x[2],self.y[2],self.x[3],self.y[3])
+        if( dist2to3 > (self.L[2] + self.L[3]))
+            print("No solution\n");
+            return;
+        else
+            self.th[2] = GetAngle(dist2to3,self.L[2],self.L[3]) + GetAngleByPoints(self.x[2],self.y[2],self.x[3],self.y[3]);
+        self.ShowPosture();
+            
     def DriveArmsIntersect(self):
         #Set up the linear algebra equations
         A = np.array([[tan(self.th[1]), -1],[tan(self.th[4]), -1]]);
