@@ -80,7 +80,7 @@ class FiveBar:
         plt.ylim([-4, 4]);
         plt.draw();
     
-    def SetDriveArmPositions(self, th1, th4)
+    def SetDriveArmPositions(self, th1, th4):
         self.th[1] = th1;
         self.th[4] = th4;
         self.x[2] = self.L[1]*cos(self.th[1]);
@@ -89,13 +89,13 @@ class FiveBar:
         self.x[3] = self.L[0] + self.L[4]*cos(self.th[4]);
         self.y[3] = self.L[4]*sin(self.th[4]);
         
-        dist2to3 = dist(self.x[2],self.y[2],self.x[3],self.y[3])
-        if( dist2to3 > (self.L[2] + self.L[3]))
+        dist2to3 = Distance(self.x[2],self.y[2],self.x[3],self.y[3])
+        if( dist2to3 > (self.L[2] + self.L[3])):
             print("No solution\n");
             return;
-        else
+        else:
             self.th[2] = GetAngle(dist2to3,self.L[2],self.L[3]) + GetAngleByPoints(self.x[2],self.y[2],self.x[3],self.y[3]);
-        self.ShowPosture();
+        
             
     def DriveArmsIntersect(self):
         #Set up the linear algebra equations
@@ -106,13 +106,16 @@ class FiveBar:
         det = np.linalg.det(A);
         
         #find the intersection point
-        if(det == 0):
-            pass;
+        if(det == 0): #if parallel
+            #check that the arms are not pointing at each other and within the thickness of the beam (mesured in rads for now)
+            if(cos(self.th[1]) > 0 and abs(sin(self.th[1])) < 0.05 and cos(self.th[4]) < 0 and abs(sin(self.th[4])) < 0.05):
+                return true;
+            else:
+                return false;
         else:
             X = np.linalg.solve(A,B);
-            
-        xInt = X[0];
-        yInt = X[1];
+            xInt = X[0];
+            yInt = X[1];
         
         #if the intersection point is within the radii of both arms and they are
         #pointed towards each other, there will be a collision
