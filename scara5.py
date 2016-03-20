@@ -93,8 +93,12 @@ class FiveBar:
         if( dist2to3 > (self.L[2] + self.L[3])):
             print("No solution\n");
             return;
-        else:
-            self.th[2] = GetAngle(dist2to3,self.L[2],self.L[3]) + GetAngleByPoints(self.x[2],self.y[2],self.x[3],self.y[3]);
+        
+        if(self.DriveArmsIntersect()):
+            print("Drive Arms Intersect\n");
+            return;
+            
+        self.th[2] = GetAngle(dist2to3,self.L[2],self.L[3]) + GetAngleByPoints(self.x[2],self.y[2],self.x[3],self.y[3]);
         
             
     def DriveArmsIntersect(self):
@@ -109,9 +113,9 @@ class FiveBar:
         if(det == 0): #if parallel
             #check that the arms are not pointing at each other and within the thickness of the beam (mesured in rads for now)
             if(cos(self.th[1]) > 0 and abs(sin(self.th[1])) < 0.05 and cos(self.th[4]) < 0 and abs(sin(self.th[4])) < 0.05):
-                return true;
+                return True;
             else:
-                return false;
+                return False;
         else:
             X = np.linalg.solve(A,B);
             xInt = X[0];
