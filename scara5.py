@@ -57,9 +57,10 @@ class FiveBar:
             
         except ValueError:
             print(self.th[1], "no solution\n");
+            return 1;
         
     def ShowPosture(self):
-        plt.cla();
+        #plt.cla();
         x = [0]*5;
         y = [0]*5;
         for i in [1,2]:
@@ -74,11 +75,11 @@ class FiveBar:
             last_i = i;
         
         #print(Distance(x[3],y[3],x[2],y[2]));
-        plt.plot(x,y,'--ro');
-        plt.axes().set_aspect('equal')
-        plt.xlim([-2, 4.5]);
-        plt.ylim([-4, 4]);
-        plt.draw();
+        plt.plot(x[2],y[2],'--rs',markersize = 1);
+        #plt.axes().set_aspect('equal')
+        #plt.xlim([-2, 4.5]);
+        #plt.ylim([-4, 4]);
+        #plt.draw();
     
     def SetDriveArmPositions(self, th1, th4):
         self.th[1] = th1;
@@ -92,14 +93,13 @@ class FiveBar:
         dist2to3 = Distance(self.x[2],self.y[2],self.x[3],self.y[3])
         if( dist2to3 > (self.L[2] + self.L[3])):
             print("No solution\n");
-            return;
+            return 1;
         
         if(self.DriveArmsIntersect()):
             print("Drive Arms Intersect\n");
-            return;
+            return 1;
             
         self.th[2] = GetAngle(dist2to3,self.L[2],self.L[3]) + GetAngleByPoints(self.x[2],self.y[2],self.x[3],self.y[3]);
-        
             
     def DriveArmsIntersect(self):
         #Set up the linear algebra equations
