@@ -5,7 +5,6 @@ import numpy as np
 import math
 import random
 import matplotlib.pyplot as plt
-plt.use('GTKAgg')
 from scara5 import FiveBar
 
 #Create the Five Bar model
