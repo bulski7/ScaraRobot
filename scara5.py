@@ -1,9 +1,10 @@
 from math import atan, sqrt, asin, sin, cos, acos, tan
-import math
+import time, math
 from KinHelp import GetAngle, Distance, sign, GetAngleByPoints
-
+import RPi.GPIO as GPIO
 import numpy as np
 import matplotlib.pyplot as plt
+from StepperMotor import StepperMotor
 
 class FiveBar:
 #5 Bar robot object
@@ -13,7 +14,13 @@ class FiveBar:
         self.th = [0,0,0,0,0];  #theta vector
         self.x = [0,0,0,0,0];
         self.y = [0,0,0,0,0];
-   
+
+        #add the stepper motor objects
+        self.MotorA = StepperMotor(13,19,1600);
+        self.MotorB = StepperMotor(5,6,1600);
+       
+
+           
     #Set the link angles to achieve a given X,Y of the end effector
     #Using geometric equations
     def SetEndEffectorPosition(self, EndEffectorX, EndEffectorY):
@@ -135,3 +142,34 @@ class FiveBar:
             return True;
         else:
             return False;
+
+    def Step(self, Motor):
+        if(Motor == "A"):
+            GPIO.output(self.MotorAPulsePin, False);
+            time.sleep(10e-6);
+            GPIO.output(self.MotorAPulsePin,True);
+        elif (Motor == "B"):
+            GPIO.output(self.MotorBPulsePin, False);
+            time.sleep(10e-6);
+            GPIO.output(self.MotorBPulsePin,True);
+        else:
+            print("cannot step. invalid motor\n");
+        return
+
+    def SetDirection(self, Motor, Direction):
+        if(Motor == "A"):
+            if(Direction > 0):
+                GPIO.output(self.MotorADirectionPin, False);
+            else:
+                GPIO.output(self.MotorADirectionPin, True);
+        elif(Motor == "B"):
+            if(Direction > 0):
+                GPIO.output(self.MotorBDirectionPin, False);
+            else:
+                GPIO.output(self.MotorBDirectionPin, True);
+        return
+
+    
+            
+            
+    

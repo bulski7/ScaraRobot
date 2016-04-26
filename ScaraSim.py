@@ -11,9 +11,21 @@ from scara5 import FiveBar
 scara = FiveBar();
 scara.L = [45,150,150,150,150];
 
+direction = 1;
+for i in range(1,10):
+    direction *= -1;
+    scara.SetDirection("A",direction)
+    scara.SetDirection("B",direction)
+    for i in range(1,100):
+        scara.Step("A");
+        scara.Step("B");
+        time.sleep(0.1);
+        
+    
+
 #Forward Kinematics Test
-for th1 in np.linspace(0,2*math.pi,6400):
-    for th4 in np.linspace(0,2*math.pi,6400):
+for th1 in np.linspace(0,2*math.pi,50):
+    for th4 in np.linspace(0,2*math.pi,50):
         if(not scara.SetDriveArmPositions(th1,th4) and not scara.DriveArmsIntersect()):
             scara.ShowPosture();
             
