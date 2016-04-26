@@ -9,17 +9,17 @@ from scara5 import FiveBar
 
 #Create the Five Bar model
 scara = FiveBar();
-scara.L = [2.5,2,2,2,2];
+scara.L = [45,150,150,150,150];
 
 #Forward Kinematics Test
-for th1 in np.linspace(0,2*math.pi,400):
-    for th4 in np.linspace(0,2*math.pi,400):
+for th1 in np.linspace(0,2*math.pi,6400):
+    for th4 in np.linspace(0,2*math.pi,6400):
         if(not scara.SetDriveArmPositions(th1,th4) and not scara.DriveArmsIntersect()):
             scara.ShowPosture();
             
 plt.axes().set_aspect('equal')
-plt.xlim([-2, 4.5]);
-plt.ylim([-4, 4]);
+#plt.xlim([-2, 4.5]);
+#plt.ylim([-4, 4]);
 plt.show()
 
 #Inverse Kinematics Test
