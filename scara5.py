@@ -15,9 +15,11 @@ class FiveBar:
         self.x = [0,0,0,0,0];
         self.y = [0,0,0,0,0];
 
+        self.moveVelocity = 0.1; #rad/s
+
         #add the stepper motor objects
-        self.MotorA = StepperMotor(13,19,1600);
-        self.MotorB = StepperMotor(5,6,1600);
+        self.MotorA = StepperMotor(13,19,6400);
+        self.MotorB = StepperMotor(5,6,6400);
        
 
            
@@ -40,8 +42,8 @@ class FiveBar:
             thG = math.atan2(yc,xc - self.L[0]);
             th4G = GetAngle(self.L[4],G,self.L[3]);
             th4  = [0,0];
-            th4[0] = thG + th4G;
-            th4[1] = thG - th4G;
+            th4[0] = thG - th4G;
+            th4[1] = thG + th4G;
             
             #Select the first set of angles that do not intersect
             for self.th[1] in th1:
@@ -61,6 +63,10 @@ class FiveBar:
             self.x[4] = self.L[0] + self.L[4]*cos(self.th[4]);
             self.y[4] = self.L[4]*sin(self.th[4]);
             self.th[3] = GetAngleByPoints(self.x[4],self.y[4],xc,yc);
+
+            # Move the motors to that position
+            self.MotorA.Move(self.th[4],self.moveVelocity)
+            self.MotorB.Move(self.th[1],self.moveVelocity)
             
         except ValueError:
             print(self.th[1], "no solution\n");
@@ -81,11 +87,11 @@ class FiveBar:
             y[i] = y[last_i] + self.L[last_i]*sin(self.th[last_i]);
             last_i = i;
         
-        #print(Distance(x[3],y[3],x[2],y[2]));
-        plt.plot(x[2],y[2],'--rs',markersize = 1);
-        #plt.axes().set_aspect('equal')
-        #plt.xlim([-2, 4.5]);
-        #plt.ylim([-4, 4]);
+        print(Distance(x[3],y[3],x[2],y[2]));
+        plt.plot(x,y,'--r');
+        plt.axes().set_aspect('equal')
+        #plt.xlim([-200, 450]);
+        #plt.ylim([-400, 400]);
         #plt.draw();
     
     def SetDriveArmPositions(self, th1, th4):
@@ -107,6 +113,10 @@ class FiveBar:
             return 1;
             
         self.th[2] = GetAngle(dist2to3,self.L[2],self.L[3]) + GetAngleByPoints(self.x[2],self.y[2],self.x[3],self.y[3]);
+
+        # Move the motors to that position
+        #self.MotorA.Move(self.th[3],self.moveVelocity)
+        #self.MotorB.Move(self.th[2],self.moveVelocity)
             
     def DriveArmsIntersect(self):
         #Set up the linear algebra equations
