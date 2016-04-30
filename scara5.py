@@ -3,9 +3,23 @@ import time, math
 from KinHelp import GetAngle, Distance, sign, GetAngleByPoints
 import RPi.GPIO as GPIO
 import numpy as np
+import threading
 import matplotlib.pyplot as plt
 from StepperMotor import StepperMotor
 
+class MoveThread(threading.Thread):
+    def __init__(self, threadID, motor, position, velocity):
+        threading.Thread.__init__(self)
+        self.motor    = motor;
+        self.threadID = threadID
+        self.position = position
+        self.velocity = velocity
+        
+    def run(self):
+        print("Starting " + self.threadID)
+        self.motor.Move(self.position, self.velocity)
+        print("Exiting " + self.threadID)
+        
 class FiveBar:
 #5 Bar robot object
 
@@ -64,9 +78,23 @@ class FiveBar:
             self.y[4] = self.L[4]*sin(self.th[4]);
             self.th[3] = GetAngleByPoints(self.x[4],self.y[4],xc,yc);
 
-            # Move the motors to that position
-            self.MotorA.Move(self.th[4],self.moveVelocity)
-            self.MotorB.Move(self.th[1],self.moveVelocity)
+            # Move the motors to that position - sequentially...
+            #self.MotorA.Move(self.th[4],self.moveVelocity)
+            #self.MotorB.Move(self.th[1],self.moveVelocity)
+
+            #create new thread objs
+            thread1 = MoveThread("1", self.MotorA, self.th[4], 0.1);
+            thread2 = MoveThread("2", self.MotorB, self.th[1], 0.1);
+
+            #start the threads
+            thread1.start()
+            thread2.start()          
+
+            # wait until the threads terminate
+            thread1.join()
+            thread2.join()
+
+            return 0;
             
         except ValueError:
             print(self.th[1], "no solution\n");

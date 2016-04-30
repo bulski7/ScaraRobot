@@ -7,6 +7,7 @@ import random
 import matplotlib.pyplot as plt
 from scara5 import FiveBar
 
+
 #Create the Five Bar model
 scara = FiveBar();
 scara.L = [45,100,100,100,100];
@@ -24,22 +25,37 @@ scara.L = [45,100,100,100,100];
 
 #Inverse Kinematics Test
 #Move the end effector at CV
- #for x in np.linspace(-2,4.5,50):
-for y in np.linspace(197,100,50):
-    scara.SetEndEffectorPosition(22.5,y);
 
-for x in np.linspace(22.5,42.5,50):
+##t = np.linspace(0,4*math.pi,1000);
+##x = np.zeros([1000,1]);
+##y = np.zeros([1000,1]);
+##
+##x = 22.5 + 20*math.sin(2*t);
+##y = 50   + 20*math.cos(4*t);
+
+##for t in t:
+    #scara.SetEndEffectorPosition(x,y);
+x = 22.5;
+for y in np.linspace(196, 130 ,5):
     scara.SetEndEffectorPosition(x,y);
 
-for y in np.linspace(100, 150 ,50):
+time.sleep(5);
+
+for x in np.linspace(22.5,42.5,2):
     scara.SetEndEffectorPosition(x,y);
 
-for x in np.linspace(42.5,22.5,50):
+for y in np.linspace(130, 150 ,2):
+    scara.SetEndEffectorPosition(x,y);
+
+for x in np.linspace(42.5,22.5,2):
+    scara.SetEndEffectorPosition(x,y);
+
+for y in np.linspace(150, 130 ,2):
     scara.SetEndEffectorPosition(x,y);
 
 
 
-plt.show()
+#plt.show()
     
  #while(True):
   #   scara.SetEndEffectorPosition(random.uniform(-2,4.5),random.uniform(-4,4));

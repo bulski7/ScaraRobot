@@ -10,8 +10,9 @@ class StepperMotor:
         #how many steps per revolution
         self.NumSteps = NumSteps;
 
-        #store the position in radians, assume 0 because no homing method yet
+        #store the position and setpoint in radians, assume 0 because no homing method yet
         self.position = math.pi/2;
+        self.setpoint = math.pi/2;
 
         #setup GPIO
         GPIO.setmode(GPIO.BCM);
@@ -39,22 +40,29 @@ class StepperMotor:
 
     def Move(self, Position, Velocity):
 
-        #convert to absolute position
-        Position = Position - self.position;
+        #move the setpoint to the new position in absolute coords
+        self.setpoint += Position - self.position;
         
-        self.SetDirection(math.copysign(1,Position))
-        numPulses = self.NumSteps*(abs(Position)/(2*math.pi))
+        #convert to relative position error
+        PositionError = self.setpoint - self.position;
+        
+        #correct the position error as best as the steps allow
+        self.SetDirection(math.copysign(1,PositionError))
+        numPulses = math.floor(self.NumSteps*(abs(PositionError)/(2*math.pi)))
         stepTime = 2*math.pi/Velocity/self.NumSteps;
         
         #print("NumPulses: ", numPulses)
         #print("StepTime: ", stepTime)
         print("Goal angle: ", Position)
+        print("Position Error: ", PositionError)
 
         for i in range(1,int(numPulses)+1):
             self.Step();
             time.sleep(stepTime);
 
-        self.position = self.position + Position;#numPulses*2*math.pi/self.NumSteps*self.;
+        #reflect the change in position only if the motor stepped
+        self.position += numPulses*2*math.pi/self.NumSteps*math.copysign(1,PositionError);
+        
         return
     
     
