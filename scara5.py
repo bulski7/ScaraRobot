@@ -32,17 +32,32 @@ class FiveBar:
         self.moveVelocity = 0.1; #rad/s
 
         #add the stepper motor objects
-        self.MotorA = StepperMotor(13,19,6400);
-        self.MotorB = StepperMotor(5,6,6400);
+        self.MotorA = StepperMotor(13,19,12800);
+        self.MotorB = StepperMotor(5,6,12800);
        
 
            
     #Set the link angles to achieve a given X,Y of the end effector
     #Using geometric equations
-    def SetEndEffectorPosition(self, EndEffectorX, EndEffectorY):
+    def SetEndEffectorPosition(self, EndEffectorX, EndEffectorY, MoveTime = 1):
         xc = EndEffectorX; 
         yc = EndEffectorY;
+
+        #calculate the component velocities of the move to achieve the move time
+        #move distance in cartesian coords
+        #dx = xc - self.x[2];
+        #dy = yc - self.y[2];
         
+
+        
+
+        #move velocities in cartesian coords
+        #xd = dx/MoveTime;
+        #yd = dy/MoveTime;
+
+        #print("xd: ",xd)
+        #print("yd: ",yd)
+              
         try:
             F = sqrt(xc**2 + yc**2);
             G = sqrt((self.L[0]-xc)**2 + yc**2);
@@ -58,6 +73,9 @@ class FiveBar:
             th4  = [0,0];
             th4[0] = thG - th4G;
             th4[1] = thG + th4G;
+
+            prevth1 = self.th[1];
+            prevth4 = self.th[4];
             
             #Select the first set of angles that do not intersect
             for self.th[1] in th1:
@@ -67,6 +85,19 @@ class FiveBar:
                 else:
                     continue;
                 break;
+
+            #calculate the change in theta so the move can be completed in commanded time period
+            dth1 = self.th[1] - prevth1;
+            dth4 = self.th[4] - prevth4;
+
+            #dont bother to move if it's already at that location
+            if(dth1 == 0 and dth4 == 0):
+                return;
+
+            #calculate the angular velocity of each motor to complete the move in commanded time period along time-optimized path
+            th1d = dth1/MoveTime
+            th4d = dth4/MoveTime
+            
                     
             # self.th[1] = (GetAngle(self.L[0],F,G) + GetAngle(self.L[1],F,self.L[2]));
             self.x[1] = self.L[1]*cos(self.th[1]);
@@ -78,13 +109,19 @@ class FiveBar:
             self.y[4] = self.L[4]*sin(self.th[4]);
             self.th[3] = GetAngleByPoints(self.x[4],self.y[4],xc,yc);
 
+            #calculate the angular velocity to have both motors reach the destination at the same time
+            #th1d = (xd + yd*math.tan(self.th[2]))/(self.L[1]*math.sin(self.th[1]) - self.L[1]*math.cos(self.th[1])*math.tan(self.th[2]))
+            #th4d = (xd + yd*math.tan(self.th[3]))/(self.L[4]*math.sin(self.th[4]) - self.L[4]*math.cos(self.th[4])*math.tan(self.th[3]))
+
+            print("th1d: ",  th1d)
+            print("th4d: ",  th4d)
             # Move the motors to that position - sequentially...
             #self.MotorA.Move(self.th[4],self.moveVelocity)
             #self.MotorB.Move(self.th[1],self.moveVelocity)
 
             #create new thread objs
-            thread1 = MoveThread("1", self.MotorA, self.th[4], 0.1);
-            thread2 = MoveThread("2", self.MotorB, self.th[1], 0.1);
+            thread1 = MoveThread("1", self.MotorA, self.th[4], th4d);
+            thread2 = MoveThread("2", self.MotorB, self.th[1], th1d);
 
             #start the threads
             thread1.start()
@@ -94,6 +131,9 @@ class FiveBar:
             thread1.join()
             thread2.join()
 
+            self.x[2] = EndEffectorX
+            self.y[2] = EndEffectorY
+            
             return 0;
             
         except ValueError:
@@ -120,7 +160,7 @@ class FiveBar:
         plt.axes().set_aspect('equal')
         #plt.xlim([-200, 450]);
         #plt.ylim([-400, 400]);
-        #plt.draw();
+        plt.show();
     
     def SetDriveArmPositions(self, th1, th4):
         self.th[1] = th1;

@@ -49,12 +49,12 @@ class StepperMotor:
         #correct the position error as best as the steps allow
         self.SetDirection(math.copysign(1,PositionError))
         numPulses = math.floor(self.NumSteps*(abs(PositionError)/(2*math.pi)))
-        stepTime = 2*math.pi/Velocity/self.NumSteps;
+        stepTime = 2*math.pi/abs(Velocity)/self.NumSteps;
         
-        #print("NumPulses: ", numPulses)
-        #print("StepTime: ", stepTime)
-        print("Goal angle: ", Position)
-        print("Position Error: ", PositionError)
+        print("NumPulses: ", numPulses)
+        print("StepTime: ", stepTime)
+        #print("Goal angle: ", Position)
+        #print("Position Error: ", PositionError)
 
         for i in range(1,int(numPulses)+1):
             self.Step();

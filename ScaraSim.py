@@ -8,9 +8,13 @@ import matplotlib.pyplot as plt
 from scara5 import FiveBar
 
 
-#Create the Five Bar model
+#Create the Five Bar model - assume it is initialized with arms at pi/2
 scara = FiveBar();
 scara.L = [45,100,100,100,100];
+scara.th = [0, math.pi/2, math.pi/2, math.pi/2, math.pi/2];
+scara.x[2]  = 45/2;
+scara.y[2]  = 197.5;  
+#scara.ShowPosture();
 
 ###Forward Kinematics Test
 ##for th1 in np.linspace(0,2*math.pi,50):
@@ -36,22 +40,24 @@ scara.L = [45,100,100,100,100];
 ##for t in t:
     #scara.SetEndEffectorPosition(x,y);
 x = 22.5;
-for y in np.linspace(196, 130 ,5):
-    scara.SetEndEffectorPosition(x,y);
+y = 197.5;
+#for y in np.linspace(196, 96 ,2):
+scara.SetEndEffectorPosition(x,y,1);
+scara.SetEndEffectorPosition(x,y-100,20);
 
 time.sleep(5);
 
-for x in np.linspace(22.5,42.5,2):
-    scara.SetEndEffectorPosition(x,y);
-
-for y in np.linspace(130, 150 ,2):
-    scara.SetEndEffectorPosition(x,y);
-
-for x in np.linspace(42.5,22.5,2):
-    scara.SetEndEffectorPosition(x,y);
-
-for y in np.linspace(150, 130 ,2):
-    scara.SetEndEffectorPosition(x,y);
+##for x in np.linspace(22.5,42.5,2):
+##    scara.SetEndEffectorPosition(x,y);
+##
+##for y in np.linspace(130, 150 ,2):
+##    scara.SetEndEffectorPosition(x,y);
+##
+##for x in np.linspace(42.5,22.5,2):
+##    scara.SetEndEffectorPosition(x,y);
+##
+##for y in np.linspace(150, 130 ,2):
+##    scara.SetEndEffectorPosition(x,y);
 
 
 
