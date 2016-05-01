@@ -43,22 +43,36 @@ x = 22.5;
 y = 197.5;
 #for y in np.linspace(196, 96 ,2):
 scara.SetEndEffectorPosition(x,y,1);
-scara.SetEndEffectorPosition(x,y-100,20);
 
-time.sleep(5);
+scara.SetEndEffectorPosition(x,130,4);
 
-##for x in np.linspace(22.5,42.5,2):
-##    scara.SetEndEffectorPosition(x,y);
-##
-##for y in np.linspace(130, 150 ,2):
-##    scara.SetEndEffectorPosition(x,y);
-##
-##for x in np.linspace(42.5,22.5,2):
-##    scara.SetEndEffectorPosition(x,y);
-##
-##for y in np.linspace(150, 130 ,2):
-##    scara.SetEndEffectorPosition(x,y);
+#time.sleep(5);
+#scara.PenDown()
+time.sleep(0.2);
 
+pointCount = 0;
+for t in np.linspace(-25*math.pi,25*math.pi,3000):
+    pointCount += 1;
+    scara.SetEndEffectorPosition(15*(math.sin(3.02*t)-math.sin(2.02*t))+22.5,15*(math.sin(4.02*t)-math.sin(6.02*t))+130,0.8);
+    if(pointCount == 1):
+        scara.PenDown();
+
+##Draw 20x20 square
+##while(True):
+##    #for x in np.linspace(22.5,42.5,2):
+##    scara.SetEndEffectorPosition(42.5,130);
+##
+##    #for y in np.linspace(130, 150 ,2):
+##    scara.SetEndEffectorPosition(42.5,150);
+##
+##    #for x in np.linspace(42.5,22.5,2):
+##    scara.SetEndEffectorPosition(22.5,150);
+##
+##    #for y in np.linspace(150, 130 ,2):
+##    scara.SetEndEffectorPosition(22.5,130);
+    
+
+scara.PenUp();
 
 
 #plt.show()

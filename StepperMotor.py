@@ -45,14 +45,24 @@ class StepperMotor:
         
         #convert to relative position error
         PositionError = self.setpoint - self.position;
+
+        if(PositionError == 0):
+            return;
         
         #correct the position error as best as the steps allow
         self.SetDirection(math.copysign(1,PositionError))
         numPulses = math.floor(self.NumSteps*(abs(PositionError)/(2*math.pi)))
-        stepTime = 2*math.pi/abs(Velocity)/self.NumSteps;
+
+        if(numPulses == 0):
+            return;
         
-        print("NumPulses: ", numPulses)
-        print("StepTime: ", stepTime)
+        stepTime = 2*math.pi/abs(Velocity)/self.NumSteps;
+
+        if(stepTime < 25e-6):
+            stepTime = 25e-6;
+            
+        #print("NumPulses: ", numPulses)
+        #print("StepTime: ", stepTime)
         #print("Goal angle: ", Position)
         #print("Position Error: ", PositionError)
 

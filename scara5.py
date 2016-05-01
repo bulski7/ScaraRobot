@@ -16,9 +16,9 @@ class MoveThread(threading.Thread):
         self.velocity = velocity
         
     def run(self):
-        print("Starting " + self.threadID)
+        #print("Starting " + self.threadID)
         self.motor.Move(self.position, self.velocity)
-        print("Exiting " + self.threadID)
+        #print("Exiting " + self.threadID)
         
 class FiveBar:
 #5 Bar robot object
@@ -32,14 +32,21 @@ class FiveBar:
         self.moveVelocity = 0.1; #rad/s
 
         #add the stepper motor objects
-        self.MotorA = StepperMotor(13,19,12800);
-        self.MotorB = StepperMotor(5,6,12800);
-       
+        self.MotorA = StepperMotor(13,19,6400);
+        self.MotorB = StepperMotor(5,6,6400);
 
+        #add the pen down output, true = pen down
+        GPIO.setup(26, GPIO.OUT);
+       
+    def PenDown(self):
+        GPIO.output(26,True);
+
+    def PenUp(self):
+        GPIO.output(26,False);
            
     #Set the link angles to achieve a given X,Y of the end effector
     #Using geometric equations
-    def SetEndEffectorPosition(self, EndEffectorX, EndEffectorY, MoveTime = 1):
+    def SetEndEffectorPosition(self, EndEffectorX, EndEffectorY, MoveTime = 2):
         xc = EndEffectorX; 
         yc = EndEffectorY;
 
@@ -113,8 +120,8 @@ class FiveBar:
             #th1d = (xd + yd*math.tan(self.th[2]))/(self.L[1]*math.sin(self.th[1]) - self.L[1]*math.cos(self.th[1])*math.tan(self.th[2]))
             #th4d = (xd + yd*math.tan(self.th[3]))/(self.L[4]*math.sin(self.th[4]) - self.L[4]*math.cos(self.th[4])*math.tan(self.th[3]))
 
-            print("th1d: ",  th1d)
-            print("th4d: ",  th4d)
+            #print("th1d: ",  th1d)
+            #print("th4d: ",  th4d)
             # Move the motors to that position - sequentially...
             #self.MotorA.Move(self.th[4],self.moveVelocity)
             #self.MotorB.Move(self.th[1],self.moveVelocity)
@@ -130,9 +137,10 @@ class FiveBar:
             # wait until the threads terminate
             thread1.join()
             thread2.join()
+            
 
-            self.x[2] = EndEffectorX
-            self.y[2] = EndEffectorY
+            #self.x[2] = EndEffectorX
+            #self.y[2] = EndEffectorY
             
             return 0;
             
